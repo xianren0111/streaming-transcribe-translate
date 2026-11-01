@@ -1,0 +1,31 @@
+Supplemental public license notices:
+
+Tcl 9 / Tk 9:
+https://raw.githubusercontent.com/tcltk/tcl/core-9-0-branch/license.terms
+https://raw.githubusercontent.com/tcltk/tk/core-9-0-branch/license.terms
+
+CTranslate2:
+https://raw.githubusercontent.com/OpenNMT/CTranslate2/master/LICENSE
+
+FlatBuffers:
+https://raw.githubusercontent.com/google/flatbuffers/master/LICENSE
+
+Hugging Face Tokenizers:
+https://raw.githubusercontent.com/huggingface/tokenizers/main/LICENSE
+
+Sherpa-onnx-core shares the Apache-2.0 license included with sherpa-onnx.
+WMI's installed public source declares MIT licensing and:
+Copyright Tim Golden - mail at timgolden.me.uk 2003 - 2015.
+
+qrcode-terminal 0.8 is attributed to wang_pc and its published author contact.
+The source distribution supplied in corresponding-source materials expressly
+declares MIT in setup.py. QRCODE-TERMINAL-MIT.txt preserves the available details.
+
+Streaming source is authorized under MIT by xianren0111, the requesting user
+who expressly confirmed copyright ownership, on 2026-11-01.
+See STREAMING-AUTHORIZATION.txt and STREAMING-MIT.txt.
+
+FFmpeg and PyAV use our unmodified audio-focused LGPL-only n8.1 build.
+The complete FFmpeg source, build configuration, build script and hashes are
+supplied in the corresponding-source release ZIP. The original PyAV codec
+DLLs are not redistributed. Publish the source ZIP alongside the binary ZIP.

@@ -1,0 +1,28 @@
+Streaming component redistribution authorization
+
+Grant recorded on 2026-11-01.
+
+The requesting user, xianren0111, explicitly confirmed they are the copyright
+holder of the Streaming components used by this application and authorized
+redistribution of those components under the MIT License with this application.
+This records the user's express authorization; it is not an inference from
+repository metadata, nor a representation that Nyanko7 issued the grant.
+
+Authorized bundled source files:
+src/__init__.py
+src/bilibili.py
+src/browser_cookies.py
+src/user_login.py
+src/youtube_web.py
+src/missevan.py
+src/translate.py
+src/config.py
+src/emotes.py
+src/gifts.py
+src/slang.py
+src/openai_compatible_translate.py
+src/transcription.py
+
+Only source code is copied. Private configuration, login state, secrets, logs,
+models, and unrelated sibling project files are not part of the grant record
+or the application payload. The sibling project itself is not modified.

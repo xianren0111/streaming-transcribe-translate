@@ -25,3 +25,8 @@ models/
 docs/guides/*.docx
 docs/guides/images/
 docs/guides/social/*.png
+
+# Portable release build outputs (published as release assets, not source).
+build/
+dist/
+release/

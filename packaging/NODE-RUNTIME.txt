@@ -1,0 +1,28 @@
+Node.js portable JavaScript runtime for yt-dlp
+
+yt-dlp's default EJS dependency is included. Its YouTube signature solver
+requires a JavaScript runtime. The portable PyInstaller runtime hook supplies
+the bundled Node executable when YoutubeDL has no explicitly configured
+JavaScript runtimes. Explicit caller configuration remains respected.
+No npm install, Node system installation, or Deno installation is required.
+
+Official release: Node.js v24.22.2, Windows x64
+Binary archive:
+https://nodejs.org/dist/v24.22.2/node-v24.22.2-win-x64.zip
+Official checksums:
+https://nodejs.org/dist/v24.22.2/SHASUMS256.txt
+Archive SHA256:
+ca1bff5d8ead13c9f2ea404a176db46bd430704d5b5113734049fa365e7799e2
+Source repository:
+https://github.com/nodejs/node/tree/v24.22.2
+
+The exact official archive's LICENSE contains the Node MIT license and full
+third-party license/copyright notices, including V8, OpenSSL, libuv, ICU,
+and the other compiled dependencies. That file is included verbatim.
+Only node.exe is bundled; npm, headers, documentation and developer tooling
+from the vendor archive are excluded.
+
+Build preparation:
+Download and verify the archive under build/vendor-downloads.
+Extract only node.exe, LICENSE and README.md into build/node-vendor.
+Run scripts/build_portable.py after installing requirements-build.txt.

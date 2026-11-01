@@ -6,6 +6,13 @@ interface; a Tkinter fallback is also available.
 
 ## Install
 
+For end users, see the [Windows portable guide](docs/PORTABLE_WINDOWS.md) and
+[GitHub Releases](https://github.com/xianren0111/streaming-transcribe-translate/releases).
+The portable edition includes its runtime and FFmpeg; speech models are
+downloaded by an explicit first-run setup dialog.
+
+### From source (developers)
+
 Use Python 3.10 or later. From the project directory, create an environment and
 install the project dependencies:
 
@@ -24,8 +31,8 @@ installing the project dependencies. Stream audio may also require FFmpeg on
 Platform stream and chat integrations use the sibling `Streaming` project.
 At runtime, this source project resolves it at `..\Streaming`; the sibling
 project must be present and its required dependencies installed in the same
-Python environment for those integrations. This repository is not a standalone
-packaged executable.
+Python environment for those integrations. The source checkout is not a standalone
+packaged executable; the portable release bundles these runtime components.
 
 ## Start
 

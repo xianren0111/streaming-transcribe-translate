@@ -10,11 +10,11 @@ from typing import Optional, TypedDict
 from urllib.parse import urlsplit
 
 import requests
-from .paths import ROOT
+from .paths import ROOT, RESOURCE_ROOT
 from .platforms import PLATFORMS
 
 
-_STREAMING_ROOT = ROOT.parent / "Streaming"
+_STREAMING_ROOT = RESOURCE_ROOT / "Streaming" if getattr(sys, "frozen", False) else ROOT.parent / "Streaming"
 _modules_cache: Optional[tuple[ModuleType, ModuleType, ModuleType, ModuleType]] = None
 
 

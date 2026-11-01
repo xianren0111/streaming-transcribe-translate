@@ -20,12 +20,12 @@ from urllib.parse import parse_qs, urlsplit
 from dotenv import dotenv_values
 
 from .app_controller import AppController, UserError
-from .paths import LOG_FILE, LOGS_ROOT, ROOT
+from .paths import LOG_FILE, LOGS_ROOT, ROOT, RESOURCE_ROOT
 from .ui_translations import TRANSLATIONS
 
 log = logging.getLogger(__name__)
 
-WEB_DIR = Path(__file__).resolve().parent / "web"
+WEB_DIR = RESOURCE_ROOT / "streaming_transcribe_translate" / "web"
 URL_FILE = ROOT / "web_url.txt"
 PREFERRED_PORT = 8765
 APP_ID = "streaming-transcribe-translate"
