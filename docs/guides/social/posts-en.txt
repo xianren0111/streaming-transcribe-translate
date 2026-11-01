@@ -1,0 +1,15 @@
+Twitter / X
+
+Windows live subtitles: local ASR, your translation API, multilingual reading, single-language chat review, floating/OBS subtitles and reviewed SRT/CSV. One platform at a time. Setup required; API fees/limits may apply. Demo images; project link to follow.
+
+Bilibili 动态
+
+Preparing a base version of a Windows live-subtitle tool.
+
+Local speech recognition, your OpenAI-compatible translation API, multilingual reading, one review/send language, floating subtitles, OBS and reviewed SRT/CSV export.
+
+Supports 哔哩哔哩, YouTube and 猫耳FM, one platform at a time. Manual review is the default; platform login is required to send chat.
+
+This is a Python project requiring dependencies and local models, not an installation-free EXE. APIs may charge fees or impose limits. Records are off by default. Review translations and keep keys/cookies private.
+
+All images use isolated demo data. Chinese, Japanese and English guides are ready. Public name and project link will be added later.

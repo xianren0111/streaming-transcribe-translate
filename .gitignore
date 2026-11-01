@@ -1,0 +1,27 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.env
+.env.*
+subtitle_settings.json
+subtitle_settings.tmp
+interface_preferences.json
+interface_preferences.tmp
+overlay_window.json
+web_url.txt
+logs/
+records/
+*.log
+
+# Speech models downloaded by Setup Models.bat
+models/
+
+# Guides and publication images are local manual-publishing deliverables.
+docs/guides/*.docx
+docs/guides/images/
+docs/guides/social/*.png

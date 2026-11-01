@@ -1,0 +1,386 @@
+{
+  "zh": {
+    "title": "同传字幕",
+    "subtitle": "基础版本 · 图文使用指南",
+    "intro": "听见每一句，轻松翻译与分享。适合观看外语直播、阅读多语言字幕，以及人工审核后分享译文。",
+    "demo": "本指南图片使用独立演示数据；房间、模型和字幕均为示例，不含真实账号或密钥。",
+    "features": [
+      "本机语音识别，自选翻译服务",
+      "多语言阅读，一种语言审核与发送",
+      "桌面悬浮字幕、OBS 字幕页、已审核 SRT / CSV"
+    ],
+    "setup_title": "01  首次准备：请技术协助者完成安装",
+    "setup": [
+      "当前基础版是 Windows Python 项目，不是已打包的免安装 EXE。公开项目名称与下载链接尚未确定；本指南不提供虚构链接。",
+      "准备 Python 3.10 或更高版本、FFmpeg，以及项目依赖。直播平台功能仍依赖同级目录中的 Streaming 项目；请按 README 的安装说明准备，不要只复制一个启动文件。",
+      "在项目目录执行以下命令安装依赖。首次模型安装需要网络与磁盘空间；之后启动字幕不会自动下载模型。"
+    ],
+    "setup_after": [
+      "双击「Setup Models.bat」完成本机语音模型安装，或执行下方模型命令。",
+      "安装完成后，日常使用只需双击「Start Translation.bat」。浏览器会自动打开本机界面。程序不是云端网站，请不要把 localhost 地址当成下载链接。",
+      "若双击后没有界面，用命令行启动以查看错误。不要为了排错公开配置、原始字幕、日志或 Cookie。"
+    ],
+    "service_title": "02  设置翻译服务",
+    "service": [
+      "点击首页右上角齿轮 → 翻译。填写 OpenAI 兼容服务地址、该服务支持的模型 ID 和自己的 API Key。",
+      "可点「检测模型」选择模型。填好后点「保存」，再点「测试连接」。图中的 api.example.com / your-model 仅为演示，不能直接使用。",
+      "声音在本机识别；识别出的文字会发给翻译服务。API 可能收费或限流。API Key 在 Windows 上按当前用户加密保存，不能直接拷给另一台电脑使用。",
+      "上下文、智能断句和译文检查是可选功能，默认关闭。启用 Decisions 会向 OpenCode Zen 发送原文/译文，不发送音频；限流时跳过辅助，字幕继续。"
+    ],
+    "home_title": "03  选择声音、语言并开始",
+    "home": [
+      "粘贴一个完整直播 URL，自动识别哔哩哔哩、YouTube 或猫耳FM。一次只连接一个平台，不是同时多站转播。",
+      "选择声音来源：直播间声音 / 麦克风 / 电脑声音。麦克风和电脑声音可独立使用，无需为了识别而登录。",
+      "原文语言可选自动、日语、英语或中文。阅读字幕可多选简体、繁体、英语、日语、韩语；审核和发送只选其中一种语言。",
+      "点击「开始字幕」。更换平台或字幕语言前先停止。系统声音模式要确认电脑正在播放声音；麦克风模式检查录音设备与权限。"
+    ],
+    "review_title": "04  人工审核后发送",
+    "review": [
+      "默认手动模式。右侧原文仅供参考；当前译文可以直接编辑。新译文进入队列，不会覆盖你正在修改的文字。",
+      "确认后点击「发送到直播间」；不发送则点击「跳过」。发送需要该平台的有效登录与房间权限。",
+      "选择一种审核/发送语言。模板必须含一次 {translation}，还可使用 {original}、{language}。修改模板只影响新译文，当前草稿不变。",
+      "「保留数量」位于发送按钮同一行左侧，用于限制队列与字幕保留量，不是无限保存。",
+      "自动发送会绕过人工确认，应谨慎启用。超长消息自动拆分；保守上限为哔哩哔哩 20、YouTube 200、猫耳FM 100 个 UTF-16 单位，发送至少间隔 2 秒；站点规则可能更严格。",
+      "网站拒绝时停止发送。部分发送后重试保留原文，只发送剩余部分；不要在部分发送状态改写整条消息，先重试或跳过。"
+    ],
+    "overlay_title": "05  悬浮字幕与 OBS",
+    "overlay": [
+      "点击「打开字幕悬浮窗」。拖动背景移动位置，用右下角手柄调整大小。鼠标移入显示工具栏。",
+      "在悬浮工具栏调整字体、配色、背景浓淡、原文和耗时显示；修改即时生效。锁定后穿透鼠标，需解锁后移动/缩放。",
+      "OBS：添加「浏览器」来源，复制首页提供的字幕页地址。多种阅读语言可以一起显示。",
+      "地址包含本机会话 token，只用于自己电脑。程序重启后应重新复制地址；不要把真实 OBS 地址发到社交平台。",
+      "下图是实际浏览器字幕页的演示，不是桌面悬浮工具栏。仅显示字幕，不录制视频或音频。"
+    ],
+    "records_title": "06  记录与剪辑导出",
+    "records": [
+      "设置 → 记录。默认不记录；如需导出，先开启「保存字幕和发送记录」以及审核字幕保存，然后开始新会话。",
+      "「选择文件夹」立即保存设置，但从下次开始字幕才使用新目录。当前会话和旧记录不会自动移动。",
+      "成功发送或明确跳过时记录审核后的文字；尚未审核的内容不是完整转录归档。多语言显示不代表所有语言都会进入审核记录。",
+      "选择有审核记录的会话，点击「导出已审核 SRT + CSV」。SRT 用于剪映等剪辑工具；CSV 区分发送/跳过并保留相关时间信息。",
+      "时间从开始字幕时自动计时，不是直播网站的源时间码。缓冲、网络延迟和剪辑起点需在编辑器里校正；SRT 不包含样式。"
+    ],
+    "help_title": "07  常见问题与安全退出",
+    "help": [
+      [
+        "没有字幕",
+        "检查声音来源、电脑播放音量/麦克风权限、本机模型是否安装，以及翻译服务测试是否成功。"
+      ],
+      [
+        "翻译服务限流 / 429",
+        "等待后再试并检查服务额度。可选 Decisions 限流只暂停辅助，不会自动关闭识别与翻译。"
+      ],
+      [
+        "聊天发送失败",
+        "检查平台登录、房间权限和慢速模式。不要反复点击或公开 Cookie；站点拒绝不自动重试。"
+      ],
+      [
+        "悬浮窗不能拖动或缩放",
+        "先确认未锁定；在首页解锁，然后拖右下角手柄。"
+      ],
+      [
+        "导出列表为空",
+        "记录是否在该会话开始前开启？是否至少成功发送或跳过一条字幕？"
+      ],
+      [
+        "如何退出",
+        "「停止字幕」结束当前字幕任务；「退出程序」正常关闭后台与悬浮窗，不是强制杀进程。只关闭网页标签页，后台仍可能运行。"
+      ]
+    ],
+    "exit_note": "退出后未发送队列和临时登录状态不保留；已保存设置与记录仍在。程序卡死时正常退出不保证能强制结束。",
+    "advanced_title": "08  进阶配置与公开分享",
+    "advanced": [
+      "普通使用者通过界面设置即可，无需编辑 env。技术协助者可在项目根目录配置 .env，详细参数见 docs/ENV_CONFIGURATION.md。",
+      "已保存 JSON 字段优先于 env 默认值；env 仅补齐缺失字段，之后才使用内置默认值。编辑 env 后重启生效。",
+      "完整 LIVE_ROOM_URL 自动识别平台，无需 LIVE_PLATFORM；纯数字房间号需要明确平台。中文输出代码沿用 zh-CN（简体）和 zh-TW（繁体）。",
+      "API Key、Cookie、真实字幕/记录、日志、本机会话 token 与个人路径不应提交到 GitHub，也不应出现在公开截图里。",
+      "此基础版的翻译结果需人工核对。遵守主播与平台规则，获得必要授权；不要承诺零延迟、100% 准确或不限量免费。"
+    ],
+    "social_titles": [
+      "多语言直播字幕",
+      "一个链接，开始阅读",
+      "先审核，再分享",
+      "本机识别，按需记录"
+    ],
+    "social_lines": [
+      [
+        "本机识别 + 自选翻译服务",
+        "哔哩哔哩 / YouTube / 猫耳FM",
+        "多语言阅读，单语言发送"
+      ],
+      [
+        "粘贴完整直播 URL",
+        "选择声音来源与阅读语言",
+        "基础版需先完成 Python / 模型安装"
+      ],
+      [
+        "编辑当前译文，确认发送或跳过",
+        "新译文进入队列，不覆盖草稿",
+        "发送聊天需要平台登录"
+      ],
+      [
+        "记录默认关闭，开启后从新会话生效",
+        "导出已发送 + 已跳过的审核文字",
+        "翻译文字会发给所选 API 服务"
+      ]
+    ],
+    "social_footer": "基础版本 · 演示数据 · 下载链接待补充",
+    "twitter": "做了一个 Windows 直播字幕工具：本机语音识别、自选翻译 API、多语言阅读、单语言审核发送，还有悬浮字幕、OBS 和已审核 SRT/CSV 导出。支持哔哩哔哩 / YouTube / 猫耳FM，一次一个平台。基础版需先安装依赖；翻译可能收费或限流。图片均为演示数据，项目链接稍后补充。",
+    "bilibili": "整理了一版直播同传字幕工具，准备作为基础版本发布。\n\n功能：本机识别声音，自选 OpenAI 兼容翻译服务；阅读语言可多选，审核/发送只用一种语言；支持悬浮字幕、OBS 字幕页，以及已审核 SRT/CSV 导出。\n\n哔哩哔哩 / YouTube / 猫耳FM 一次只连接一个平台。默认人工审核后发送，发送需要登录；麦克风与电脑声音无需为识别登录。\n\n当前是 Windows Python 项目，需要先安装依赖和本机模型，不是免安装 EXE。翻译 API 可能收费或限流，结果请人工核对。\n\n记录默认关闭；字幕、密钥和 Cookie 请勿公开。图为独立演示数据。中/日/英指南已准备，公开项目名称与链接待补充。"
+  },
+  "ja": {
+    "title": "同伝字幕",
+    "subtitle": "ベース版 · 画像付き操作ガイド",
+    "intro": "配信の音声を読みやすい字幕に。外国語配信の視聴、多言語表示、確認した翻訳のチャット共有に使えます。",
+    "demo": "画像は独立したデモ環境で作成しています。配信URL・モデル・字幕は例であり、実際のアカウントやキーは含みません。",
+    "features": [
+      "音声認識はローカル、翻訳サービスは選択可能",
+      "複数言語を表示、確認と送信は1言語",
+      "フローティング字幕・OBS・確認済みSRT / CSV"
+    ],
+    "setup_title": "01  初回準備：インストールは詳しい方に依頼",
+    "setup": [
+      "ベース版は Windows 向け Python プロジェクトです。インストール不要の EXE ではありません。公開名とダウンロードURLは未定です。",
+      "Python 3.10 以上、FFmpeg、プロジェクトの依存パッケージを用意します。配信プラットフォーム機能は同じ親フォルダーに置いた Streaming プロジェクトにも依存します。README に従ってください。",
+      "プロジェクトのフォルダーで次のコマンドを実行します。モデルの初回導入には通信と空き容量が必要です。字幕開始時にモデルを自動ダウンロードすることはありません。"
+    ],
+    "setup_after": [
+      "「Setup Models.bat」をダブルクリックして音声モデルを導入するか、下記のモデル導入コマンドを使います。",
+      "準備後は「Start Translation.bat」をダブルクリックするとブラウザー画面が開きます。localhost は自分のPCのアドレスで、配布用リンクではありません。",
+      "画面が開かない場合はコマンドライン起動でエラーを確認します。設定・字幕・ログ・Cookieをそのまま公開しないでください。"
+    ],
+    "service_title": "02  翻訳サービスを設定",
+    "service": [
+      "右上の歯車 → 翻訳。OpenAI 互換のサービスURL、対応するモデルID、ご自身の API Key を入力します。",
+      "「モデルを検出」で一覧から選べます。保存してから「接続をテスト」を押します。画像の api.example.com / your-model は例で、そのまま利用できません。",
+      "音声認識はPC上で行い、認識したテキストは翻訳サービスに送ります。APIは有料・回数制限の場合があります。保存したキーはWindowsの現在のユーザーに紐づいて暗号化されます。",
+      "文脈・文の区切り判断・翻訳チェックは任意で、初期状態はオフです。Decisions を有効にすると原文/訳文を OpenCode Zen に送りますが音声は送りません。制限時は補助をスキップします。"
+    ],
+    "home_title": "03  音声と言語を選んで開始",
+    "home": [
+      "配信の完全なURLを貼り付けると、哔哩哔哩・YouTube・猫耳FMを自動判別します。同時に接続できるプラットフォームは1つです。",
+      "音声は配信・マイク・PCの再生音から選びます。マイクとPC音声は、認識のためにログインする必要はありません。",
+      "原文は自動・日本語・英語・中国語。表示は簡体字・繁体字・英語・日本語・韓国語から複数選択できます。確認/送信はそのうち1言語です。",
+      "「字幕を開始」を押します。プラットフォームや言語を変える前に停止してください。PC音声は再生中の音量、マイクは権限と入力機器を確認します。"
+    ],
+    "review_title": "04  確認してからチャットへ送信",
+    "review": [
+      "初期状態は手動です。右側の原文を参考に現在の訳文を編集できます。新しい訳文はキューに入り、編集中の文章を上書きしません。",
+      "確認後に「チャットへ送信」、送らない場合は「スキップ」。送信にはサイトへのログインと配信ルームの権限が必要です。",
+      "確認/送信言語を1つ選びます。テンプレートには {translation} を1回含め、{original}、{language} も使用可能です。変更は新しい訳文だけに適用されます。",
+      "保持数は送信ボタンと同じ行の左側です。キューと字幕の保持量を制限する設定で、無制限の履歴保存ではありません。",
+      "自動送信は確認を省略するので慎重に使ってください。長文は分割し、保守的な上限は哔哩哔哩20、YouTube200、猫耳FM100 UTF-16単位、間隔は最低2秒です。サイト側の制限が優先します。",
+      "拒否された場合は送信を停止します。一部送信済みの再試行は同じ文章で残りだけを送ります。途中で文章を変更せず、再試行またはスキップしてください。"
+    ],
+    "overlay_title": "05  フローティング字幕と OBS",
+    "overlay": [
+      "「フローティング字幕を開く」を押します。背景をドラッグして移動、右下のハンドルでサイズ変更。マウスを乗せるとツールバーが出ます。",
+      "ツールバーで文字サイズ・配色・背景濃度・原文・処理時間を変更できます。変更は即時反映。ロック中はクリックが透過するため、移動/サイズ変更前に解除します。",
+      "OBS に「ブラウザ」ソースを追加し、ホームの字幕ページURLを貼り付けます。複数の表示言語を同時に表示できます。",
+      "URLはローカルのセッションtokenを含みます。アプリ再起動後はコピーし直してください。実際のOBS用URLをSNSに公開しないでください。",
+      "下図は実際のブラウザー字幕ページのデモです。デスクトップのツールバーではありません。字幕表示機能であり、音声/動画録画ではありません。"
+    ],
+    "records_title": "06  記録と編集用エクスポート",
+    "records": [
+      "設定 → 記録。初期状態は記録オフです。必要な場合は記録と確認済み字幕の保存をオンにして、新しい字幕セッションを開始します。",
+      "保存フォルダーの選択はすぐ保存されますが、適用は次の字幕開始からです。現在のセッションや過去の記録は移動しません。",
+      "送信成功または明示的なスキップ時に確認済みの文章を記録します。未確認の全発話の保存ではなく、多言語表示すべてが記録されるわけではありません。",
+      "確認済み記録のあるセッションを選び、SRT + CSV を書き出します。SRTは字幕編集用、CSVは送信/スキップと関連時刻を区別します。",
+      "時間は字幕開始時からのローカル経過時間です。配信サイトの元タイムコードではありません。バッファー/通信遅延と編集開始点を調整してください。SRTにスタイルは含まれません。"
+    ],
+    "help_title": "07  困ったとき・終了方法",
+    "help": [
+      [
+        "字幕が出ない",
+        "音声入力・再生音量・マイク権限、導入済みモデル、翻訳接続テストを確認します。"
+      ],
+      [
+        "API制限 / 429",
+        "時間を置いてサービスの利用枠を確認。Decisions の制限は補助だけを一時停止し、字幕処理は続きます。"
+      ],
+      [
+        "送信できない",
+        "ログイン、ルーム権限、スローモードを確認。連打せず、Cookieを公開しないでください。"
+      ],
+      [
+        "移動/サイズ変更できない",
+        "ロックを解除し、右下のハンドルをドラッグしてください。"
+      ],
+      [
+        "エクスポート一覧が空",
+        "記録を開始前にオンにしたか、少なくとも1件を送信成功/スキップしたかを確認します。"
+      ],
+      [
+        "終了したい",
+        "停止は字幕処理のみを終了。アプリ終了はバックグラウンドと字幕窓を正常終了します。ブラウザーのタブを閉じるだけでは終了しません。"
+      ]
+    ],
+    "exit_note": "終了後は未送信キューと一時ログイン状態が消えます。保存済み設定と記録は残ります。正常終了は強制終了ではなく、フリーズ時の終了を保証しません。",
+    "advanced_title": "08  高度な設定と公開時の注意",
+    "advanced": [
+      "通常の操作は画面設定で十分です。技術担当者はプロジェクトの .env で初期値を設定できます。全変数は docs/ENV_CONFIGURATION.md に記載しています。",
+      "保存済みJSONの各項目がenv初期値より優先されます。envは未保存項目だけを補い、最後に内蔵初期値を使います。env変更は再起動後に反映します。",
+      "完全な LIVE_ROOM_URL ならプラットフォームを自動判別。数字IDだけなら LIVE_PLATFORM が必要です。中国語コードは zh-CN（簡体字）、zh-TW（繁体字）です。",
+      "API Key・Cookie・実際の字幕/記録・ログ・セッションtoken・個人フォルダー情報をGitHubや公開画像に含めないでください。",
+      "訳文は人による確認が必要です。配信者とサイトのルールを守り、必要な許可を得てください。無遅延・完全な正確さ・無制限無料を保証するツールではありません。"
+    ],
+    "social_titles": [
+      "配信を多言語字幕で",
+      "URLひとつで視聴",
+      "確認してから共有",
+      "ローカル認識・任意の記録"
+    ],
+    "social_lines": [
+      [
+        "ローカル音声認識 + 選べる翻訳API",
+        "哔哩哔哩 / YouTube / 猫耳FM",
+        "複数言語表示・送信は1言語"
+      ],
+      [
+        "配信の完全なURLを貼り付け",
+        "音声入力と言語を選択",
+        "初回はPython / モデルの導入が必要"
+      ],
+      [
+        "訳文を編集して送信またはスキップ",
+        "新しい訳文はキューへ",
+        "チャット送信にはログインが必要"
+      ],
+      [
+        "記録は初期状態オフ・新セッションから",
+        "確認済みの送信/スキップをSRT/CSVへ",
+        "翻訳テキストは選んだAPIに送信"
+      ]
+    ],
+    "social_footer": "ベース版 · デモデータ · 公開URLは後日",
+    "twitter": "Windows向け配信字幕ツールのベース版を準備中。ローカル音声認識、選べる翻訳API、多言語表示、確認後の1言語送信、字幕窓/OBS、確認済みSRT/CSV。哔哩哔哩・YouTube・猫耳FMは一度に1サイト。依存導入が必要、APIは有料/制限の場合あり。画像はデモ、公開URLは後日。",
+    "bilibili": "Windows向け配信字幕ツールのベース版を準備しています。\n\n音声認識はローカル。翻訳には選んだOpenAI互換APIを使用し、複数言語表示・1言語の確認/送信・字幕窓・OBS・確認済みSRT/CSVに対応します。\n\n哔哩哔哩、YouTube、猫耳FMは一度に1サイト。手動確認が初期設定。送信にはログインが必要です。\n\nPythonと依存パッケージ、本機モデルの導入が必要で、インストール不要のEXEではありません。APIは有料・制限の場合があります。記録は初期状態オフ。結果は確認し、キーやCookieを公開しないでください。\n\n画像は独立したデモ環境です。中・日・英ガイドを用意しました。公開名とURLは後日追記します。"
+  },
+  "en": {
+    "title": "Live Subtitles",
+    "subtitle": "Base version · Illustrated user guide",
+    "intro": "Hear, translate and share every sentence. Read foreign-language streams in multiple languages and review translations before sharing them in chat.",
+    "demo": "All screenshots use isolated demo data. Room URLs, models and captions are examples, with no real account details or API keys.",
+    "features": [
+      "Local speech recognition; your choice of translation API",
+      "Multiple reading languages; one review/send language",
+      "Floating subtitles, OBS, reviewed SRT / CSV export"
+    ],
+    "setup_title": "01  First-time setup: ask a technical helper",
+    "setup": [
+      "This base version is a Windows Python project, not a packaged, installation-free EXE. The public project name and download URL are not finalized; no download link is provided here.",
+      "Prepare Python 3.10 or newer, FFmpeg and the project dependencies. Platform features still depend on the sibling Streaming project. Follow the repository README; copying only the launcher is not sufficient.",
+      "Run the dependency command below from the project folder. Initial speech-model installation needs internet access and disk space. Starting subtitles does not automatically download models."
+    ],
+    "setup_after": [
+      "Double-click Setup Models.bat, or run the model setup command below, to install the local speech models.",
+      "After setup, double-click Start Translation.bat for everyday use. It opens the local browser interface. A localhost URL belongs to your PC, not to a public download website.",
+      "If the page does not open, start from a terminal to see the error. Do not publish configuration files, raw captions, logs or cookies when seeking help."
+    ],
+    "service_title": "02  Configure your translation service",
+    "service": [
+      "Open the top-right gear icon, then Translation. Enter an OpenAI-compatible base URL, a model ID supported by that provider, and your own API key.",
+      "Detect models can populate a model list. Save, then Test connection. api.example.com / your-model in the screenshot are placeholders, not usable service settings.",
+      "Speech is recognized locally; recognized text is sent to the translation provider. APIs may charge fees or enforce rate limits. Keys saved on Windows are encrypted for the current Windows user.",
+      "Context, smart segmentation and translation checking are optional and off by default. Decisions sends original/translated text, not audio, to OpenCode Zen. Rate limiting skips optional assistance while subtitles continue."
+    ],
+    "home_title": "03  Choose audio and languages, then start",
+    "home": [
+      "Paste a full live URL to detect 哔哩哔哩, YouTube or 猫耳FM automatically. Only one platform is connected at a time; this is not simultaneous multi-site streaming.",
+      "Choose Stream audio, Microphone or Computer sound. Microphone and computer audio do not require platform login for recognition.",
+      "Source language supports auto-detect, Japanese, English or Chinese. Select several reading languages from Simplified/Traditional Chinese, English, Japanese and Korean; review/send uses one of them.",
+      "Click Start subtitles. Stop first before changing platforms or subtitle languages. For computer audio, check that playback is audible; for microphone audio, check the device and permissions."
+    ],
+    "review_title": "04  Review before sending",
+    "review": [
+      "Manual mode is the default. Use the original as a reference and edit the current translation. New translations join the queue without overwriting your current draft.",
+      "Choose Send to chat after checking, or Skip to discard sending. Sending requires valid platform login and room permissions.",
+      "Select one review/send language. A template must contain {translation} exactly once, with optional {original} and {language}. Changes affect new translations only, not the current draft.",
+      "Retain is at the left of the Send/Skip row. It limits queue and displayed-caption retention, not unlimited archival storage.",
+      "Automatic sending bypasses review: enable cautiously. Long messages split automatically. Conservative limits are 20/200/100 UTF-16 units for 哔哩哔哩/YouTube/猫耳FM, with at least 2 seconds between attempts. Site rules can be stricter.",
+      "Site rejection stops sending. After partial delivery, retry the unchanged message to send only the remaining parts. Do not rewrite it mid-delivery; retry or Skip first."
+    ],
+    "overlay_title": "05  Floating subtitles and OBS",
+    "overlay": [
+      "Open floating subtitles. Drag the background to move it and use the bottom-right grip to resize. Hover to reveal the toolbar.",
+      "Change text size, palette, background opacity, original text and timing on the floating toolbar. Changes apply immediately. Locked windows pass clicks through: unlock before moving or resizing.",
+      "In OBS, add a Browser source and paste the subtitle-page URL from the home screen. Multiple reading languages can appear together.",
+      "The URL includes a local session token. Copy the new URL after restarting the app. Do not publish your actual OBS URL on social media.",
+      "The image below is a demo of the real browser subtitle page, not the native floating toolbar. This displays subtitles; it does not record audio or video."
+    ],
+    "records_title": "06  Records and editing exports",
+    "records": [
+      "Settings > Records. Recording is off by default. Enable session records and reviewed-caption saving before starting a new session if you need exports.",
+      "A folder choice is saved immediately but takes effect on the next subtitle session. Current-session files and older records are not moved.",
+      "Successful sends and explicit skips record the reviewed text. Unreviewed speech is not a complete transcript archive; displaying multiple languages does not mean all of them are review-recorded.",
+      "Choose a session containing reviewed entries and export SRT + CSV. SRT is for subtitle editing; CSV distinguishes sent/skipped entries and their related timestamps.",
+      "Timing starts when subtitles start on your PC. It is not the source site's timecode. Correct buffering/network delay and editing offsets in your editor. SRT does not include styling."
+    ],
+    "help_title": "07  Troubleshooting and safe exit",
+    "help": [
+      [
+        "No subtitles",
+        "Check audio input, playback volume/microphone permissions, installed models and the translation connection test."
+      ],
+      [
+        "API limit / 429",
+        "Wait and check the provider's quota. Optional Decisions limiting pauses assistance only, not the subtitle pipeline."
+      ],
+      [
+        "Cannot send chat",
+        "Check platform login, room permissions and slow mode. Avoid repeated clicks or sharing cookies; site rejection does not trigger an automatic retry."
+      ],
+      [
+        "Cannot move/resize",
+        "Unlock the floating window, then drag its bottom-right grip."
+      ],
+      [
+        "Empty export list",
+        "Was recording enabled before this session? Was at least one caption successfully sent or explicitly skipped?"
+      ],
+      [
+        "How to exit",
+        "Stop subtitles ends the current subtitle task. Quit app gracefully closes the background service and floating window. Closing only the browser tab may leave the app running."
+      ]
+    ],
+    "exit_note": "Quitting clears pending messages and temporary platform logins. Saved settings and records remain. Quit is not a process-kill command and cannot guarantee termination of a frozen app.",
+    "advanced_title": "08  Advanced configuration and public sharing",
+    "advanced": [
+      "Ordinary users can use the interface without editing env. Technical helpers may configure project-root .env defaults; see docs/ENV_CONFIGURATION.md for the complete variable reference.",
+      "Saved JSON fields override env defaults. Env fills missing fields; built-in defaults come last. Restart the app after changing env.",
+      "A full LIVE_ROOM_URL identifies the platform; a numeric room ID requires LIVE_PLATFORM. Chinese output uses the existing zh-CN (Simplified) and zh-TW (Traditional) codes.",
+      "Do not publish API keys, cookies, actual captions/records, logs, session tokens or personal paths in GitHub uploads or screenshots.",
+      "Review AI translations. Respect streamers' and platforms' rules and obtain necessary permissions. This tool does not promise zero latency, perfect accuracy or unlimited free translation."
+    ],
+    "social_titles": [
+      "Read streams in more languages",
+      "One URL, one platform",
+      "Review first. Share second.",
+      "Local speech. Optional records."
+    ],
+    "social_lines": [
+      [
+        "Local ASR + your translation API",
+        "哔哩哔哩 / YouTube / 猫耳FM",
+        "Read many languages; send one"
+      ],
+      [
+        "Paste the full live URL",
+        "Choose audio and reading languages",
+        "First install Python dependencies + models"
+      ],
+      [
+        "Edit, then Send or Skip",
+        "New translations queue behind your draft",
+        "Platform login is required to send"
+      ],
+      [
+        "Records are off by default",
+        "Export reviewed sent/skipped text",
+        "Translation text goes to your API provider"
+      ]
+    ],
+    "social_footer": "Base version · Demo data · Public link to follow",
+    "twitter": "Windows live subtitles: local ASR, your translation API, multilingual reading, single-language chat review, floating/OBS subtitles and reviewed SRT/CSV. One platform at a time. Setup required; API fees/limits may apply. Demo images; project link to follow.",
+    "bilibili": "Preparing a base version of a Windows live-subtitle tool.\n\nLocal speech recognition, your OpenAI-compatible translation API, multilingual reading, one review/send language, floating subtitles, OBS and reviewed SRT/CSV export.\n\nSupports 哔哩哔哩, YouTube and 猫耳FM, one platform at a time. Manual review is the default; platform login is required to send chat.\n\nThis is a Python project requiring dependencies and local models, not an installation-free EXE. APIs may charge fees or impose limits. Records are off by default. Review translations and keep keys/cookies private.\n\nAll images use isolated demo data. Chinese, Japanese and English guides are ready. Public name and project link will be added later."
+  }
+}
