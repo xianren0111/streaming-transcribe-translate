@@ -97,3 +97,21 @@ or common onomatopoeia are skipped before translation, display and chat
 delivery. Mixed sentences and ambiguous or unknown words remain unchanged.
 Older settings without this field use the new enabled default. Uncheck it to
 restore translation of these sounds.
+
+The updated v1.0.1 also includes a separate, default-enabled semantic sound
+filter using your configured translation API. It adds requests, costs and
+latency and waits for full utterances before display. Classification failures
+are reported and uncertain speech is retained. Disable it for word-list-only
+filtering. Detection is not guaranteed to be exhaustive or error-free.
+
+Optional speaker tracking is off by default. Stop subtitles before changing
+it, then confirm the separate ~28 MB model download in Settings. Its status
+shows downloading/verifying, ready, or failure with retry. Audio stays local.
+Speaker labels appear only in local subtitles and records, not chat.
+New speakers need consistent evidence from two longer segments; uncertain
+turns stay unlabelled. Similar or overlapping voices can still be misclassified.
+
+For build validation, run `python packaging\verify_release.py --check-models
+--check-speakers` using the build environment. Speaker verification downloads
+the model only into the extracted validation copy, exercises native inference,
+then removes validation models; release archives contain no models.

@@ -256,7 +256,8 @@ class DesktopSessionHost(SessionHost):
                 "segment_id": c.segment_id,
                 "target_language": c.target_language,
                 "original": c.original,
-                "translated": c.translated,
+                "translated": (f"[Speaker {c.speaker_id}] " if c.speaker_id else "") + c.translated,
+                "speaker_id": c.speaker_id,
                 "is_final": c.is_final,
                 "received_at_ms": c.audio_received_at_ms,
                 "timing": {

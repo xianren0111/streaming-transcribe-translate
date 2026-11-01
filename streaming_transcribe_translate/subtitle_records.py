@@ -53,6 +53,7 @@ class CaptionRecord:
     room: str
     audio_source: str
     target_language: str = ""
+    speaker_id: int | None = None
 
 
 @dataclass(frozen=True)
@@ -118,12 +119,13 @@ class SessionRecords:
         self, segment_id: int, received_at_ms: int, audio_end_at_ms: int,
         audio_duration_ms: int, original: str, translated: str,
         target_language: str = "",
+        speaker_id: int | None = None,
     ) -> CaptionRecord:
         if received_at_ms <= 0 or audio_end_at_ms < received_at_ms:
             raise ValueError("音频接收时间无效，不能生成剪辑记录。")
         record = CaptionRecord(
             self.session_id, segment_id, received_at_ms, audio_end_at_ms,
-            audio_duration_ms, original, translated, self.platform, self.room, self.audio_source, target_language,
+            audio_duration_ms, original, translated, self.platform, self.room, self.audio_source, target_language, speaker_id,
         )
         with self._lock:
             key = (segment_id, target_language)
@@ -146,7 +148,9 @@ class SessionRecords:
             })
             with (self.directory / "captions.txt").open("a", encoding="utf-8") as output:
                 output.write(
-                    f"[{clock_text(caption.received_at_ms)}] [{action}]\n{caption.original}\n{message}\n\n"
+                    f"[{clock_text(caption.received_at_ms)}] [{action}]"
+                    f"{' [Speaker ' + str(caption.speaker_id) + ']' if caption.speaker_id else ''}"
+                    f"\n{caption.original}\n{message}\n\n"
                 )
         self._reviewed_ids.add(key)
         self.reviewed.append(ReviewedCaption(caption, message, reviewed_at_ms, action))
@@ -203,6 +207,8 @@ class SessionRecords:
             ]
             if include_skipped:
                 columns.extend(["action", "reviewed_clock", "actual_reviewed_text", "target_language"])
+            if any(item.caption.speaker_id is not None for item in sent):
+                columns.append("speaker_id")
             writer.writerow(columns)
             for item in sent:
                 caption = item.caption
@@ -216,6 +222,8 @@ class SessionRecords:
                 ]
                 if include_skipped:
                     row.extend([item.action, clock_text(item.reviewed_at_ms), item.message, caption.target_language])
+                if "speaker_id" in columns:
+                    row.append(caption.speaker_id if caption.speaker_id is not None else "")
                 writer.writerow(row)
         cues = []
         for item in sent:
@@ -227,7 +235,8 @@ class SessionRecords:
             )
             if end <= 0:
                 continue
-            cues.append((max(0, start), end, item.message))
+            text = (f"[Speaker {caption.speaker_id}] " if caption.speaker_id else "") + item.message
+            cues.append((max(0, start), end, text))
         if not cues:
             if include_skipped:
                 raise ValueError("字幕都在会话开始之前；CSV 已导出，请检查会话时间。")

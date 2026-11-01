@@ -18,6 +18,20 @@ from tests.test_web_ui import FakeBackend
 
 
 class EnvPreferenceTests(unittest.TestCase):
+    def test_speaker_setting_defaults_validation_and_env(self):
+        self.assertFalse(SubtitleSettings().distinguish_speakers)
+        with tempfile.TemporaryDirectory() as temporary, patch(
+            "streaming_transcribe_translate.env_preferences.dotenv_values",
+            return_value={"SUBTITLE_DISTINGUISH_SPEAKERS": "true"},
+        ):
+            root = Path(temporary)
+            path = root / "settings.json"
+            self.assertTrue(SubtitleSettings.load(path, env_file=root / "config").distinguish_speakers)
+            SubtitleSettings().save(path)
+            self.assertFalse(SubtitleSettings.load(path, env_file=root / "config").distinguish_speakers)
+        with self.assertRaises(ValueError):
+            SubtitleSettings(distinguish_speakers=1).validate()
+
     def test_sound_filter_defaults_and_saved_env_precedence(self):
         self.assertTrue(SubtitleSettings().ignore_onomatopoeia)
         with tempfile.TemporaryDirectory() as temporary:

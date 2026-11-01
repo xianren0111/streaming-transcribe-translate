@@ -149,15 +149,16 @@ class SoundFilterTests(unittest.TestCase):
         for text in ("哈哈哈！", "哈 哈，哈哈。", "呵呵", "喵喵！", "汪汪", "砰！",
                      "あはは！", "アハハ", "にゃーん", "ワンワン", "ドキドキ",
                      "ha ha ha!", "HAHAHA", "meow, woof!", "ㅋㅋㅋ", "하하하",
-                     "ふん", "うん", "あっ", "えっ？", "アッ！"):
+                     "ふん", "うん", "あっ", "えっ？", "アッ！", "うっ", "うっ！", "ウッ",
+                     "嗯", "啊", "哦", "唔", "哼", "oh!", "uh", "hmmm"):
             with self.subTest(text=text):
                 self.assertTrue(is_sound_only(text))
 
     def test_mixed_ambiguous_and_unknown_utterances_remain(self):
         for text in ("哈哈，今天真开心", "猫在喵喵叫", "あはは、ありがとう",
                      "ドキドキする", "うん、わかった", "あっ、見つけた", "えっ、本当？",
-                     "ふん、そういうことか", "ha ha that's funny", "bang the drum",
-                     "啊", "嗯", "哦", "は", "ha", "yes", "", "！？", "123"):
+                     "ふん、そういうことか", "うっ、痛い", "ha ha that's funny", "bang the drum",
+                     "啊，找到了", "嗯，我知道", "oh that's nice", "は", "ha", "yes", "", "！？", "123"):
             with self.subTest(text=text):
                 self.assertFalse(is_sound_only(text))
 

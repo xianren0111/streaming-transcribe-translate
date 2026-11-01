@@ -170,6 +170,11 @@ def self_test(*, check_models: bool = False) -> dict[str, object]:
     if is_sound_only("ha ha that's funny"):
         raise RuntimeError("Bundled sound-only filter removed meaningful speech.")
     checks.append("default-enabled sound-only filter")
+    from .sound_filter import SemanticSoundFilter
+    from .speaker_tracking import SpeakerTracker, MODEL_PATH
+    if not SubtitleSettings().semantic_sound_filter or SubtitleSettings().distinguish_speakers:
+        raise RuntimeError("Bundled optional feature defaults are incorrect.")
+    checks.append("semantic filter and speaker tracking imports")
     if check_models:
         from .reazon_asr import create_asr
         for language in ("ja", "zh"):
@@ -178,6 +183,13 @@ def self_test(*, check_models: bool = False) -> dict[str, object]:
             if not isinstance(text, str):
                 raise RuntimeError("Bundled ASR returned an invalid result.")
             checks.append("local recognition: " + language)
+        if MODEL_PATH.is_file():
+            import math
+            tracker = SpeakerTracker()
+            tone = [0.1 * math.sin(2 * math.pi * 220 * n / 16000) for n in range(32000)]
+            if tracker.identify(tone) != 1 or tracker.identify(tone) != 1:
+                raise RuntimeError("Bundled speaker embedding inference failed.")
+            checks.append("local speaker embedding inference")
     return {
         "ok": True, "version": VERSION, "frozen": bool(getattr(sys, "frozen", False)),
         "ffmpeg": result.stdout.decode("utf-8", errors="replace").splitlines()[0],

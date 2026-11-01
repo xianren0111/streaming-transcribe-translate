@@ -544,6 +544,34 @@
     const name = el.dataset.opt;
     const value = el.type === "checkbox" ? el.checked
       : el.type === "number" ? (el.value === "" ? null : Number(el.value)) : el.value;
+    if (name === "distinguish_speakers" && value) {
+      el.checked = false;
+      dialog({
+        title: "区分说话人",
+        message: "首次开启将下载约 28 MB 本机声纹模型。音频不上传，下载期间请等待。标签不加入弹幕。继续吗？",
+        ok: "继续", secondary: "取消",
+        onOk: async () => {
+          el.disabled = true;
+          setResult("#speaker-download-result", t("正在下载并校验说话人模型，请等待…"));
+          try {
+            settingsSave = settingsSave.then(() => api("/api/settings/subtitle", {
+              distinguish_speakers: true, confirm_speaker_download: true,
+            }));
+            await settingsSave;
+            el.checked = true;
+            setResult("#speaker-download-result", t("说话人模型已就绪，区分说话人已开启。"), "success");
+          } catch (error) {
+            settingsSave = Promise.resolve();
+            el.checked = false;
+            setResult("#speaker-download-result", t("说话人模型下载失败，未开启。请检查网络后重试。"), "error");
+            showError(error);
+          } finally {
+            el.disabled = false;
+          }
+        },
+      });
+      return;
+    }
     return saveOptions({ [name]: value });
   }
 

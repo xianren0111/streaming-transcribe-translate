@@ -1148,6 +1148,22 @@ class AppController:
     # ----------------------------------------------------- subtitle settings
 
     def save_subtitle_settings(self, values: dict[str, Any]) -> dict[str, Any]:
+        values = dict(values)
+        confirmed = values.pop("confirm_speaker_download", False)
+        if values.get("distinguish_speakers") is True:
+            from .speaker_tracking import model_ready, download_model
+
+            with self._lock:
+                if self._session_started_at is not None:
+                    raise UserError("无法保存字幕设置", "请先停止字幕再修改说话人设置。")
+            if not model_ready():
+                if confirmed is not True:
+                    raise UserError("下载说话人模型", "首次开启需确认下载约 28 MB 本机声纹模型。")
+                try:
+                    download_model()
+                except (OSError, RuntimeError) as error:
+                    log.error("Speaker model download failed: %s", type(error).__name__)
+                    raise UserError("下载说话人模型失败", str(error)) from error
         with self._lock:
             merged = asdict(self.subtitle_settings)
             if "chat_template" in values:
@@ -1164,6 +1180,9 @@ class AppController:
             try:
                 settings = SubtitleSettings(**merged)
                 settings.validate()
+                if (self._session_started_at is not None
+                        and settings.distinguish_speakers != self.subtitle_settings.distinguish_speakers):
+                    raise ValueError("请先停止字幕再修改说话人设置。")
                 if settings.chat_language and settings.chat_language not in (
                     settings.reading_languages or [TARGET_LANGUAGES[self.target_language]]
                 ):

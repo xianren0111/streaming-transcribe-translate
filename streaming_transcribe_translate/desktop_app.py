@@ -2258,6 +2258,8 @@ class TranslationApp:
         ).pack(fill="x", pady=5)
         toggle(behavior, "deduplicate", "去掉同一条识别结果内重复的字句（也可能去掉真实重复）")
         toggle(behavior, "ignore_onomatopoeia", "忽略拟声词 · 仅跳过整句笑声、叫声或常见拟声词，不翻译或发送")
+        toggle(behavior, "semantic_sound_filter", "拟声词语义过滤 · 使用翻译 API 判断中日英整句拟声词及语气声，增加费用和延迟，等待整句后显示")
+        toggle(behavior, "distinguish_speakers", "区分说话人 · 默认关闭，仅字幕和记录显示标签；短句或多人重叠可能分错，停止字幕后修改")
         decisions = section("翻译", "在线 Decisions 模型辅助（可选）")
         self._label(
             decisions, "开启后会把原文/译文发给 OpenCode Zen，不发送音频。网络失败会明确提示并跳过辅助。",
@@ -2343,6 +2345,40 @@ class TranslationApp:
     def _save_subtitle_settings(self) -> bool:
         try:
             settings = self._feature_values()
+            if (getattr(self, "_session_started_at", None) is not None
+                    and settings.distinguish_speakers != self.subtitle_settings.distinguish_speakers):
+                raise ValueError("请先停止字幕再修改说话人设置。")
+            if settings.distinguish_speakers:
+                from .speaker_tracking import model_ready, download_model
+
+                if not model_ready():
+                    if getattr(self, "_speaker_downloading", False):
+                        return False
+                    if not self._dialog(
+                        'askyesno', "区分说话人",
+                        "首次开启将下载约 28 MB 本机声纹模型。音频不上传，下载期间请等待。标签不加入弹幕。继续吗？",
+                        parent=self.root,
+                    ):
+                        return False
+                    self._speaker_downloading = True
+
+                    def download() -> None:
+                        try:
+                            download_model()
+                        except (OSError, RuntimeError) as error:
+                            log.error("Speaker model download failed: %s", type(error).__name__)
+                            def failed(message=str(error)) -> None:
+                                self._speaker_downloading = False
+                                self._dialog('showerror', "下载说话人模型失败", message, parent=self.root)
+                            self.root.after(0, failed)
+                        else:
+                            def finished() -> None:
+                                self._speaker_downloading = False
+                                self._save_subtitle_settings()
+                            self.root.after(0, finished)
+
+                    threading.Thread(target=download, daemon=True).start()
+                    return False
             settings.save(SUBTITLE_SETTINGS_FILE)
         except (ValueError, OSError, tk.TclError) as error:
             log.error("Subtitle settings save failed: %s", type(error).__name__)

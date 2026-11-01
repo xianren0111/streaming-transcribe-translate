@@ -9,6 +9,7 @@ import os
 from pathlib import Path
 import shutil
 import subprocess
+import sys
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -17,7 +18,10 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check-models", action="store_true")
+    parser.add_argument("--check-speakers", action="store_true")
     args = parser.parse_args()
+    if args.check_speakers and not args.check_models:
+        parser.error("--check-speakers requires --check-models")
     release = ROOT / "release"
     zip_path = release / "LiveSubtitles-1.0.1-windows-x64.zip"
     source_path = release / "LiveSubtitles-1.0.1-corresponding-source.zip"
@@ -61,6 +65,11 @@ def main() -> None:
             for name in names:
                 shutil.copy2(ROOT / "models" / directory / name, destination / name)
     environment = os.environ.copy()
+    if args.check_speakers:
+        sys.path.insert(0, str(ROOT))
+        from streaming_transcribe_translate import speaker_tracking
+        speaker_tracking.MODEL_PATH = application / "models" / "speaker" / "campplus.onnx"
+        speaker_tracking.download_model()
     windows = environment.get("SystemRoot", r"C:\Windows")
     environment["PATH"] = str(Path(windows) / "System32") + os.pathsep + windows
     for name in ("PYTHONPATH", "PYTHONHOME"):
@@ -86,6 +95,8 @@ def main() -> None:
         raise SystemExit(json.dumps(result))
     if result.get("version") != "1.0.1" or "default-enabled sound-only filter" not in result.get("checks", []):
         raise SystemExit("Wrong release version or missing sound-only filter verification.")
+    if args.check_speakers and "local speaker embedding inference" not in result.get("checks", []):
+        raise SystemExit("Missing frozen speaker model verification.")
     print(json.dumps(result))
     if args.check_models:
         shutil.rmtree(application / "models")

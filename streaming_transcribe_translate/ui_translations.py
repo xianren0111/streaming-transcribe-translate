@@ -2,6 +2,21 @@
 
 
 _ROWS = """
+正在下载并校验说话人模型，请等待…|Downloading and verifying the speaker model. Please wait…|話者モデルをダウンロード・検証中です。お待ちください…|화자 모델 다운로드 및 검증 중입니다. 기다려 주세요…
+说话人模型已就绪，区分说话人已开启。|Speaker model ready. Speaker tracking is enabled.|話者モデルの準備が完了し、話者区別が有効になりました。|화자 모델 준비 완료. 화자 구분이 켜졌습니다.
+说话人模型下载失败，未开启。请检查网络后重试。|Speaker model download failed; tracking remains off. Check your connection and retry.|話者モデルのダウンロードに失敗しました。未有効です。接続を確認して再試行してください。|화자 모델 다운로드 실패. 화자 구분은 꺼져 있습니다. 연결 확인 후 다시 시도하세요.
+拟声词语义过滤 · 使用翻译 API 判断中日英整句拟声词及语气声，增加费用和延迟，等待整句后显示|Semantic sound filtering · Translation API classifies Chinese/Japanese/English sound-only utterances and interjections; adds cost and latency, displays after the full sentence|擬音語の意味判定 · 翻訳APIで中日英の擬音語・感動詞だけの文を判定。費用と遅延が増え、文の完了後に表示|의성어 의미 필터 · 번역 API로 중일영 의성어와 감탄사만 있는 문장 판별. 비용과 지연 증가, 문장 완료 후 표시
+拟声词语义判断不可用，暂时仅使用词表；未确定的内容保留翻译。|Semantic sound classification unavailable; using the word list temporarily and translating uncertain content.|擬音語の意味判定が利用できません。一時的に単語リストのみ使用し、不明な内容は翻訳します。|의성어 의미 판별 불가. 임시로 단어 목록만 사용하며 불확실한 내용은 번역합니다.
+说话人识别失败，请关闭区分说话人或重新下载模型后重试。|Speaker identification failed. Disable speaker tracking or download the model again before retrying.|話者識別に失敗しました。話者区別を無効にするかモデルを再ダウンロードして再試行してください。|화자 식별 실패. 화자 구분을 끄거나 모델을 다시 다운로드한 후 재시도하세요.
+区分说话人|Distinguish speakers|話者を区別|화자 구분
+区分说话人 · 默认关闭，仅字幕和记录显示标签；短句或多人重叠可能分错，停止字幕后修改|Distinguish speakers · Off by default; labels only in subtitles and records. Short or overlapping speech may be misclassified; stop subtitles to change|話者を区別 · 既定は無効。字幕・記録のみラベル表示。短い発話や重なりは誤判定の可能性。変更前に字幕を停止|화자 구분 · 기본 꺼짐, 자막과 기록에만 표시. 짧거나 겹치는 음성은 오인할 수 있음. 변경 전 자막 중지
+首次开启将下载约 28 MB 本机声纹模型。音频不上传，下载期间请等待。标签不加入弹幕。继续吗？|First use downloads a local speaker model (~28 MB). Audio is not uploaded. Please wait during download. Labels are not sent to chat. Continue?|初回はローカル話者モデル約28 MBをダウンロード。音声は送信しません。完了までお待ちください。チャットにラベルは付けません。続行しますか？|최초 사용 시 로컬 화자 모델 약 28 MB를 다운로드합니다. 음성은 업로드하지 않습니다. 완료까지 기다려 주세요. 채팅에는 라벨을 붙이지 않습니다. 계속할까요?
+请先停止字幕再修改说话人设置。|Stop subtitles before changing speaker settings.|話者設定を変更する前に字幕を停止してください。|화자 설정 변경 전에 자막을 중지하세요.
+请先在设置中下载说话人模型。|Download the speaker model in Settings first.|先に設定で話者モデルをダウンロードしてください。|먼저 설정에서 화자 모델을 다운로드하세요.
+说话人模型返回了无效声纹。|The speaker model returned an invalid embedding.|話者モデルが無効な声紋を返しました。|화자 모델이 유효하지 않은 임베딩을 반환했습니다.
+下载说话人模型失败|Speaker model download failed|話者モデルのダウンロード失敗|화자 모델 다운로드 실패
+下载说话人模型|Download speaker model|話者モデルをダウンロード|화자 모델 다운로드
+首次开启需确认下载约 28 MB 本机声纹模型。|Confirm the local speaker model download (~28 MB) before first use.|初回利用前に約28 MBの話者モデルのダウンロードを確認してください。|최초 사용 전에 약 28 MB 로컬 화자 모델 다운로드를 확인하세요.
 忽略拟声词 · 仅跳过整句笑声、叫声或常见拟声词，不翻译或发送|Ignore sound words · Skip sound-only laughter, calls and common onomatopoeia; do not translate or send|擬音語を無視 · 笑い声・鳴き声・既知の擬音語だけの文は翻訳・送信しない|의성어 무시 · 웃음소리, 울음소리, 일반 의성어만 있는 문장은 번역하거나 보내지 않음
 使用当前界面语言的默认模板|Use the default template for this UI language|現在の表示言語の既定テンプレートを使う|현재 UI 언어의 기본 템플릿 사용
 发送模板不能为空。|Chat template cannot be empty.|送信テンプレートは空にできません。|전송 템플릿은 비워 둘 수 없습니다.

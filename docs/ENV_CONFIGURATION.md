@@ -64,6 +64,8 @@ JSON, preferably enclosed in single dotenv quotes. Strings are UTF-8.
 | `SUBTITLE_DISPLAY_MODE` | `边听边出`, `说完再出` | `边听边出` |
 | `SUBTITLE_DEDUPLICATE` | Boolean | false |
 | `SUBTITLE_IGNORE_ONOMATOPOEIA` | Boolean | true |
+| `SUBTITLE_SEMANTIC_SOUND_FILTER` | Boolean | true |
+| `SUBTITLE_DISTINGUISH_SPEAKERS` | Boolean | false |
 | `SUBTITLE_SMART_SEGMENTATION` | Boolean | false |
 | `SUBTITLE_CHECK_TRANSLATION` | Boolean | false |
 | `SUBTITLE_PALETTE` | `黑白`, `经典白`, `影院黄`, `薄荷绿`, `天空蓝`, `樱花粉`, `白底黑字` | `黑白` |
@@ -95,13 +97,53 @@ With false, UI-language defaults are Chinese `【{translation}】`, English/Kore
 
 ## Interface and floating position
 
+`SUBTITLE_DISTINGUISH_SPEAKERS` enables local, session-scoped speaker tracking.
+Enable it in subtitle behavior settings while subtitles are stopped and confirm
+the first model download (~28 MB, checksum verified).
+The browser shows download/verification, success and failure status. Model
+network connections and reads time out after 30 seconds of inactivity; failed
+downloads leave the setting disabled and can be retried.
+Env alone does not authorize a download; if the model is missing, enable it once through settings before
+starting. Audio is processed locally, with no account or token required.
+Complete utterances of at least one second are compared using CAMPPlus speaker
+embeddings. Labels such as `[Speaker 1]` appear only in local subtitles and
+records (including SRT/CSV), never in translation prompts or outgoing chat.
+IDs reset for each session and do not identify real names. Short or quiet
+segments may have no label. Overlapping voices, changing speakers within one
+segment, music and similar voices can be misclassified. This adds CPU work and
+latency; it is not word-level diarization. At most 20 voices are tracked.
+New voices are not created from a single weak match: borderline similarity
+remains unlabelled, and a new voice after the first requires two consecutive
+segments of at least two seconds with consistent embeddings clearly unlike
+existing voices. The first voice also needs at least two seconds. This reduces
+false speaker proliferation but can delay or omit labels for brief turns.
+The model comes from the official sherpa-onnx speaker model release:
+https://github.com/k2-fsa/sherpa-onnx/releases/tag/speaker-recongition-models
+
 `SUBTITLE_IGNORE_ONOMATOPOEIA=true` (also available in subtitle behavior
 settings) skips whole recognized utterances consisting only of known laughter,
 animal calls or common sound words before translation, subtitle display and
 chat delivery. It is enabled by default, including when older saved settings
 omit the field. Mixed sentences and unknown or ambiguous sounds are preserved;
 this is a conservative built-in vocabulary, not a semantic classifier.
-Standalone Japanese interjections `ふん`, `うん`, `あっ` and `えっ` are also
+`SUBTITLE_SEMANTIC_SOUND_FILTER=true` supplements the word list with a separate
+request to your configured translation API/model for each uncached complete
+utterance, while Ignore sound words is enabled. It covers Japanese, Chinese
+and English sound words, laughter, calls and standalone interjections/reaction
+sounds, including variants not listed locally. Mixed speech must be retained.
+No classifier can guarantee detecting all sound words or zero false positives.
+This adds API charges and latency, suppressing interim drafts until the
+utterance completes to avoid showing sound-only fragments before classification.
+Recognized text (not audio) is sent to the configured provider; labels and
+translation history are not included. A session-local cache holds 256 results.
+Requests use 3-second connect and 5-second read timeouts. Invalid answers,
+network errors and rate limiting produce a notice, preserve uncertain speech
+for translation, and pause semantic requests for 30 seconds. Without configured
+API credentials or a service address, only the local word list is used.
+Disable this separate option for word-list-only filtering, or disable Ignore
+sound words to turn off both. Standalone sounds such as 嗯, 啊, oh and uh are
+also filtered; this can omit meaningful reactions. Normal yes/no words remain.
+Standalone Japanese interjections `ふん`, `うん`, `あっ`, `えっ` and `うっ` are also
 skipped when enabled, as requested; this can omit a short affirmative response
 such as `うん`. Sentences such as `うん、わかった` remain unchanged.
 Set it to `false` to translate these utterances as before. Saved settings still
@@ -141,6 +183,7 @@ SUBTITLE_CHAT_TEMPLATE_CUSTOM=true
 SUBTITLE_RETAINED_SENTENCES=50
 SUBTITLE_SHOW_ORIGINAL=true
 SUBTITLE_IGNORE_ONOMATOPOEIA=true
+SUBTITLE_SEMANTIC_SOUND_FILTER=true
 SUBTITLE_SAVE_RECORDS=false
 SUBTITLE_RECORDS_FOLDER=
 SUBTITLE_PRESETS='{"主播模式":{"background":"Live streamer speech.","glossary":"ASR: speech recognition"},"对话模式":{"background":"Everyday conversation.","glossary":""}}'

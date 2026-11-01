@@ -60,17 +60,22 @@ def whisper_ready() -> bool:
 
 def download_reazonspeech() -> None:
     for name, url, size, sha256 in MODELS:
-        target = MODELS_ROOT / name
-        if _valid(target, size, sha256):
-            continue
-        target.parent.mkdir(parents=True, exist_ok=True)
-        part = target.with_name(target.name + ".part")
-        print(f"Downloading {name} ({size / 1e6:.1f} MB)…", flush=True)
-        urllib.request.urlretrieve(url, part)
-        if not _valid(part, size, sha256):
-            part.unlink(missing_ok=True)
-            raise RuntimeError(f"{name}: wrong size or checksum")
-        part.replace(target)
+        download_verified(MODELS_ROOT / name, url, size, sha256)
+
+
+def download_verified(target: Path, url: str, size: int, sha256: str) -> None:
+    if _valid(target, size, sha256):
+        return
+    target.parent.mkdir(parents=True, exist_ok=True)
+    part = target.with_name(target.name + ".part")
+    print(f"Downloading {target.name} ({size / 1e6:.1f} MB)…", flush=True)
+    with urllib.request.urlopen(url, timeout=30) as response, part.open("wb") as output:
+        for block in iter(lambda: response.read(1 << 20), b""):
+            output.write(block)
+    if not _valid(part, size, sha256):
+        part.unlink(missing_ok=True)
+        raise RuntimeError(f"{target.name}: wrong size or checksum")
+    part.replace(target)
 
 
 def download_whisper() -> None:

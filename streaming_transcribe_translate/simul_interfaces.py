@@ -75,6 +75,7 @@ class Caption:
     time_estimated: bool = False
     audio_received_at_ms: int = 0
     target_language: str = ""
+    speaker_id: int | None = None
 
 
 @dataclass

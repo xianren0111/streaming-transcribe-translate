@@ -173,6 +173,9 @@
           <select id="opt-display-mode" data-opt="display_mode" style="width:100%"></select>
           <label class="check"><input type="checkbox" data-opt="deduplicate"><span data-i18n="去掉同一条识别结果内重复的字句（也可能去掉真实重复）"></span></label>
           <label class="check"><input type="checkbox" data-opt="ignore_onomatopoeia"><span data-i18n="忽略拟声词 · 仅跳过整句笑声、叫声或常见拟声词，不翻译或发送"></span></label>
+          <label class="check"><input type="checkbox" data-opt="semantic_sound_filter"><span data-i18n="拟声词语义过滤 · 使用翻译 API 判断中日英整句拟声词及语气声，增加费用和延迟，等待整句后显示"></span></label>
+          <label class="check"><input type="checkbox" data-opt="distinguish_speakers"><span data-i18n="区分说话人 · 默认关闭，仅字幕和记录显示标签；短句或多人重叠可能分错，停止字幕后修改"></span></label>
+          <div id="speaker-download-result" class="result" role="status" aria-live="polite"></div>
         </div>
         <div class="card">
           <h2 data-i18n="在线 Decisions 模型辅助（可选）"></h2>

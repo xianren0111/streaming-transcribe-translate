@@ -19,7 +19,11 @@ from collections import deque
 import re
 import unicodedata
 from copy import deepcopy
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .speaker_tracking import SpeakerTracker
+    from .sound_filter import SemanticSoundFilter
 
 from .simul_interfaces import (
     SessionHost, Caption, Timing, Setup, AudioSource, SpeechModels, Mt,
@@ -49,7 +53,8 @@ _SOUND_ONLY = re.compile(
     r"砰+|嘭+|咚+|叮咚|滴答|噼里啪啦|"
     r"あ?は{2,}|ふ{2,}|へ{2,}|ひ{2,}|にゃ[ーん]*|わん|"
     r"どきどき|わくわく|ぱちぱち|ごろごろ|どん|ばん|"
-    r"ふん|うん|あっ|えっ|"
+    r"ふん|うん|あっ|えっ|うっ|嗯+|啊+|哦+|唔+|哼+|"
+    r"oh|uh|um|hmm+|"
     r"(?:ha){2,}|(?:he){2,}|(?:hi){2,}|(?:ho){2,}|"
     r"meow|woof|bowwow|moo|baa|oink|quack|bang|boom|"
     r"\u110f{2,}|\u1112{2,}|하{2,}|히{2,}|야옹|멍멍)+"
@@ -336,6 +341,9 @@ class Pipeline:
         self.asr_thread: Optional[threading.Thread] = None
         self.mt_thread: Optional[threading.Thread] = None
         self.running = False
+        self.speaker_tracker: SpeakerTracker | None = None
+        self.sound_filter: SemanticSoundFilter | None = None
+        self.sound_filter_config: tuple[str, str, str | None] | None = None
 
     def refresh_settings(self) -> None:
         with self.settings_lock:
@@ -356,6 +364,9 @@ class Pipeline:
         """Start worker threads."""
         if self.running:
             return
+        if self.options.distinguish_speakers:
+            from .speaker_tracking import SpeakerTracker
+            self.speaker_tracker = SpeakerTracker()
         
         self.running = True
         self.asr_thread = threading.Thread(target=self._asr_worker, daemon=True)
@@ -563,11 +574,35 @@ class Pipeline:
                     log.debug("Skipped sound-only ASR segment %s", job["seg_id"])
                     self._complete_final(job)
                     continue
+                if (self.options.ignore_onomatopoeia and self.options.semantic_sound_filter
+                        and (self.prefs.get_translation_base_url() or self.prefs.get_translation_key("openai"))):
+                    if not job["is_final"]:
+                        continue
+                    config = (
+                        self.prefs.get_translation_base_url() or "https://api.openai.com/v1",
+                        self.prefs.translation_model,
+                        self.prefs.get_translation_key("openai"),
+                    )
+                    if self.sound_filter is None or self.sound_filter_config != config:
+                        from .sound_filter import SemanticSoundFilter
+                        self.sound_filter = SemanticSoundFilter(*config, notify=self._notice)
+                        self.sound_filter_config = config
+                    if self.sound_filter.should_skip(text):
+                        log.debug("Skipped semantic sound-only segment %s", job["seg_id"])
+                        self._complete_final(job)
+                        continue
                 if self.options.deduplicate:
                     text = remove_repeated_text(text)
                 if not text.strip():
                     self._complete_final(job)
                     continue
+                speaker_id = None
+                if self.speaker_tracker is not None and job["is_final"]:
+                    try:
+                        speaker_id = self.speaker_tracker.identify(job["samples"])
+                    except RuntimeError:
+                        self._notice("说话人识别失败，请关闭区分说话人或重新下载模型后重试。")
+                        raise
                 end = int(time.time() * 1000)
                 show_original = getattr(self.host, "show_transcription", None)
                 if callable(show_original):
@@ -614,6 +649,7 @@ class Pipeline:
                     "audio_end_ms": job["audio_end_ms"], "received_at_ms": job["received_at_ms"],
                     "asr_latency_ms": end - start, "audio_ms": job["audio_ms"],
                     "queue_at_ms": int(time.time() * 1000),
+                    "speaker_id": speaker_id,
                 }
                 if not self.translators:
                     if job["is_final"]:
@@ -706,6 +742,7 @@ class Pipeline:
                         ), audio_end_at_ms=job["audio_end_ms"],
                         audio_received_at_ms=job["received_at_ms"],
                         target_language=target.value,
+                        speaker_id=job.get("speaker_id"),
                     )
                     self.board.add(partial)
                     self.host.post(self._show_captions)
@@ -762,6 +799,7 @@ class Pipeline:
                     original=job["text"], translated=result.text, timing=timing,
                     audio_end_at_ms=job["audio_end_ms"], audio_received_at_ms=job["received_at_ms"],
                     target_language=target.value,
+                    speaker_id=job.get("speaker_id"),
                 )
                 self.board.add(caption)
                 self.metrics.translations_completed += 1
@@ -778,6 +816,7 @@ class Pipeline:
                             job["seg_id"], job["received_at_ms"], job["audio_end_ms"],
                             job["audio_ms"], job["text"], result.text,
                             target_language=language,
+                            speaker_id=job.get("speaker_id"),
                         )
                 if job["is_final"]:
                     self.finalized_segments.add(job["seg_id"])

@@ -44,6 +44,8 @@ class SubtitleSettings:
     display_mode: str = "边听边出"
     deduplicate: bool = False
     ignore_onomatopoeia: bool = True
+    semantic_sound_filter: bool = True
+    distinguish_speakers: bool = False
     smart_segmentation: bool = False
     check_translation: bool = False
     jev_provider: str = "OpenCode Zen（免费，不用 key）"
@@ -105,7 +107,7 @@ class SubtitleSettings:
         if type(self.opacity) not in (float, int) or not math.isfinite(self.opacity) or not 0.1 <= self.opacity <= 1:
             raise ValueError("背景浓淡必须在 10% 到 100% 之间。")
         for name in (
-            "use_context", "deduplicate", "ignore_onomatopoeia", "smart_segmentation", "check_translation",
+            "use_context", "deduplicate", "ignore_onomatopoeia", "semantic_sound_filter", "distinguish_speakers", "smart_segmentation", "check_translation",
             "show_original", "show_stats", "save_records", "save_captions", "diagnostics",
             "chat_template_custom",
         ):
