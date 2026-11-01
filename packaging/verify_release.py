@@ -19,9 +19,9 @@ def main() -> None:
     parser.add_argument("--check-models", action="store_true")
     args = parser.parse_args()
     release = ROOT / "release"
-    zip_path = release / "LiveSubtitles-1.0.0-windows-x64.zip"
-    source_path = release / "LiveSubtitles-1.0.0-corresponding-source.zip"
-    hashes = (release / "LiveSubtitles-1.0.0-SHA256SUMS.txt").read_text().splitlines()
+    zip_path = release / "LiveSubtitles-1.0.1-windows-x64.zip"
+    source_path = release / "LiveSubtitles-1.0.1-corresponding-source.zip"
+    hashes = (release / "LiveSubtitles-1.0.1-SHA256SUMS.txt").read_text().splitlines()
     for line in hashes:
         expected, name = line.split("  ", 1)
         if hashlib.sha256((release / name).read_bytes()).hexdigest() != expected:
@@ -84,6 +84,8 @@ def main() -> None:
     result = json.loads(report.read_text(encoding="utf-8"))
     if result.get("ok") is not True:
         raise SystemExit(json.dumps(result))
+    if result.get("version") != "1.0.1" or "default-enabled sound-only filter" not in result.get("checks", []):
+        raise SystemExit("Wrong release version or missing sound-only filter verification.")
     print(json.dumps(result))
     if args.check_models:
         shutil.rmtree(application / "models")

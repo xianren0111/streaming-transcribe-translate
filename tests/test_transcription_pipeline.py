@@ -5,7 +5,7 @@ import unittest
 from types import SimpleNamespace
 from unittest.mock import Mock, patch
 
-from streaming_transcribe_translate.caption_session import FRAME_SIZE, SAMPLE_RATE, Pipeline, Segmenter
+from streaming_transcribe_translate.caption_session import FRAME_SIZE, SAMPLE_RATE, Pipeline, Segmenter, is_sound_only
 from streaming_transcribe_translate.desktop_app_example import DesktopSessionHost, DesktopSessionPrefs
 from streaming_transcribe_translate.simul_interfaces import MtResult
 from streaming_transcribe_translate.simul_streaming_adapter import StreamingProjectAsr
@@ -105,6 +105,61 @@ class PipelineTests(unittest.TestCase):
         self.pipeline.add_audio_segment(1, [0.1] * 3, True, 0)
         self.assertEqual(self.pipeline.asr_queue.qsize(), 1)
         self.assertTrue(self.pipeline.asr_queue.get_nowait()["is_final"])
+
+    def test_sound_only_finals_skip_translation_review_and_automatic_send(self):
+        for mode in ("manual", "automatic"):
+            with self.subTest(mode=mode):
+                self.setUp()
+                self.pipeline.chat_mode = mode
+                self.pipeline.models.asr.recognize.return_value = "哈哈哈！"
+                translator = Mock()
+                self.pipeline.setup = SimpleNamespace(mt=translator)
+                self.pipeline.add_audio_segment(1, [0.1] * FRAME_SIZE, True, 0)
+                self.pipeline.start()
+                try:
+                    self.assertEqual(self.pipeline.drain(timeout=2), 0)
+                    self.assertEqual(self.pipeline.pending_final_jobs, 0)
+                    translator.translate.assert_not_called()
+                    self.sender.send.assert_not_called()
+                    self.assertTrue(self.events.empty())
+                finally:
+                    self.pipeline.stop()
+
+    def test_disabled_sound_filter_and_mixed_speech_are_translated(self):
+        for text, enabled in (("哈哈哈！", False), ("哈哈，今天真开心", True)):
+            with self.subTest(text=text, enabled=enabled):
+                self.setUp()
+                self.pipeline.options.ignore_onomatopoeia = enabled
+                self.host.prefs.subtitle_settings.ignore_onomatopoeia = enabled
+                self.pipeline.models.asr.recognize.return_value = text
+                translator = Mock()
+                translator.translate.return_value = MtResult("translated speech")
+                self.pipeline.setup = SimpleNamespace(mt=translator)
+                self.pipeline.add_audio_segment(1, [0.1] * FRAME_SIZE, True, 0)
+                self.pipeline.start()
+                try:
+                    self.assertEqual(self.pipeline.drain(timeout=2), 0)
+                    translator.translate.assert_called_once_with(text)
+                finally:
+                    self.pipeline.stop()
+
+
+class SoundFilterTests(unittest.TestCase):
+    def test_known_whole_utterances(self):
+        for text in ("哈哈哈！", "哈 哈，哈哈。", "呵呵", "喵喵！", "汪汪", "砰！",
+                     "あはは！", "アハハ", "にゃーん", "ワンワン", "ドキドキ",
+                     "ha ha ha!", "HAHAHA", "meow, woof!", "ㅋㅋㅋ", "하하하",
+                     "ふん", "うん", "あっ", "えっ？", "アッ！"):
+            with self.subTest(text=text):
+                self.assertTrue(is_sound_only(text))
+
+    def test_mixed_ambiguous_and_unknown_utterances_remain(self):
+        for text in ("哈哈，今天真开心", "猫在喵喵叫", "あはは、ありがとう",
+                     "ドキドキする", "うん、わかった", "あっ、見つけた", "えっ、本当？",
+                     "ふん、そういうことか", "ha ha that's funny", "bang the drum",
+                     "啊", "嗯", "哦", "は", "ha", "yes", "", "！？", "123"):
+            with self.subTest(text=text):
+                self.assertFalse(is_sound_only(text))
 
 
 class AsrBackendTests(unittest.TestCase):

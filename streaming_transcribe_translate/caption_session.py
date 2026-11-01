@@ -17,6 +17,7 @@ import time
 from dataclasses import dataclass, field
 from collections import deque
 import re
+import unicodedata
 from copy import deepcopy
 from typing import Optional, List, Dict, Any
 
@@ -41,6 +42,29 @@ def remove_repeated_text(text: str) -> str:
             if words[start:start + length] == words[start + length:start + 2 * length]:
                 return " ".join(words[:start + length] + words[start + 2 * length:])
     return re.sub(r"(.{4,}?[。！？!?])\s*\1", r"\1", text)
+
+
+_SOUND_ONLY = re.compile(
+    r"(?:哈{2,}|呵{2,}|嘿{2,}|嘻{2,}|呜{2,}|哇{2,}|喵+|汪+|咩+|嘎{2,}|"
+    r"砰+|嘭+|咚+|叮咚|滴答|噼里啪啦|"
+    r"あ?は{2,}|ふ{2,}|へ{2,}|ひ{2,}|にゃ[ーん]*|わん|"
+    r"どきどき|わくわく|ぱちぱち|ごろごろ|どん|ばん|"
+    r"ふん|うん|あっ|えっ|"
+    r"(?:ha){2,}|(?:he){2,}|(?:hi){2,}|(?:ho){2,}|"
+    r"meow|woof|bowwow|moo|baa|oink|quack|bang|boom|"
+    r"\u110f{2,}|\u1112{2,}|하{2,}|히{2,}|야옹|멍멍)+"
+)
+
+
+def is_sound_only(text: str) -> bool:
+    """Match known sounds only; preserve unknown or mixed utterances."""
+    normalized = unicodedata.normalize("NFKC", text).casefold()
+    normalized = "".join(
+        chr(ord(char) - 0x60) if "\u30a1" <= char <= "\u30f6" else char
+        for char in normalized
+        if not char.isspace() and not unicodedata.category(char).startswith("P")
+    )
+    return bool(normalized) and _SOUND_ONLY.fullmatch(normalized) is not None
 
 
 class Segmenter:
@@ -535,6 +559,10 @@ class Pipeline:
                     self.latest_drafts.pop(job["seg_id"], None)
                 else:
                     self.latest_drafts[job["seg_id"]] = text
+                if self.options.ignore_onomatopoeia and is_sound_only(text):
+                    log.debug("Skipped sound-only ASR segment %s", job["seg_id"])
+                    self._complete_final(job)
+                    continue
                 if self.options.deduplicate:
                     text = remove_repeated_text(text)
                 if not text.strip():

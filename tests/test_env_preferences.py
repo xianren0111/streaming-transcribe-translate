@@ -18,6 +18,23 @@ from tests.test_web_ui import FakeBackend
 
 
 class EnvPreferenceTests(unittest.TestCase):
+    def test_sound_filter_defaults_and_saved_env_precedence(self):
+        self.assertTrue(SubtitleSettings().ignore_onomatopoeia)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            path = root / "settings.json"
+            with patch("streaming_transcribe_translate.env_preferences.dotenv_values",
+                       return_value={"SUBTITLE_IGNORE_ONOMATOPOEIA": "false"}):
+                self.assertFalse(SubtitleSettings.load(
+                    path, env_file=root / "config").ignore_onomatopoeia)
+                SubtitleSettings(ignore_onomatopoeia=True).save(path)
+                self.assertTrue(SubtitleSettings.load(
+                    path, env_file=root / "config").ignore_onomatopoeia)
+            path.write_text("{}", encoding="utf-8")
+            self.assertTrue(SubtitleSettings.load(path).ignore_onomatopoeia)
+        with self.assertRaises(ValueError):
+            SubtitleSettings(ignore_onomatopoeia="true").validate()
+
     def test_single_room_url_routes_all_sites_and_saves_only_one_room_key(self):
         for url, key in (
             ("https://live.bilibili.com/25760587", "bilibili"),

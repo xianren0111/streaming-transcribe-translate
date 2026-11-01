@@ -63,6 +63,7 @@ JSON, preferably enclosed in single dotenv quotes. Strings are UTF-8.
 | `SUBTITLE_PREVIOUS_SENTENCES` | Integer 0..8 | 2 |
 | `SUBTITLE_DISPLAY_MODE` | `边听边出`, `说完再出` | `边听边出` |
 | `SUBTITLE_DEDUPLICATE` | Boolean | false |
+| `SUBTITLE_IGNORE_ONOMATOPOEIA` | Boolean | true |
 | `SUBTITLE_SMART_SEGMENTATION` | Boolean | false |
 | `SUBTITLE_CHECK_TRANSLATION` | Boolean | false |
 | `SUBTITLE_PALETTE` | `黑白`, `经典白`, `影院黄`, `薄荷绿`, `天空蓝`, `樱花粉`, `白底黑字` | `黑白` |
@@ -93,6 +94,18 @@ With false, UI-language defaults are Chinese `【{translation}】`, English/Kore
 `[{translation}]`, and Japanese `「{translation}」`.
 
 ## Interface and floating position
+
+`SUBTITLE_IGNORE_ONOMATOPOEIA=true` (also available in subtitle behavior
+settings) skips whole recognized utterances consisting only of known laughter,
+animal calls or common sound words before translation, subtitle display and
+chat delivery. It is enabled by default, including when older saved settings
+omit the field. Mixed sentences and unknown or ambiguous sounds are preserved;
+this is a conservative built-in vocabulary, not a semantic classifier.
+Standalone Japanese interjections `ふん`, `うん`, `あっ` and `えっ` are also
+skipped when enabled, as requested; this can omit a short affirmative response
+such as `うん`. Sentences such as `うん、わかった` remain unchanged.
+Set it to `false` to translate these utterances as before. Saved settings still
+take precedence over this env default.
 
 | Variable | Values | Built-in default |
 |---|---|---|
@@ -127,6 +140,7 @@ SUBTITLE_CHAT_TEMPLATE='【{translation}】'
 SUBTITLE_CHAT_TEMPLATE_CUSTOM=true
 SUBTITLE_RETAINED_SENTENCES=50
 SUBTITLE_SHOW_ORIGINAL=true
+SUBTITLE_IGNORE_ONOMATOPOEIA=true
 SUBTITLE_SAVE_RECORDS=false
 SUBTITLE_RECORDS_FOLDER=
 SUBTITLE_PRESETS='{"主播模式":{"background":"Live streamer speech.","glossary":"ASR: speech recognition"},"对话模式":{"background":"Everyday conversation.","glossary":""}}'

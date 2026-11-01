@@ -19,7 +19,7 @@ BUILD = ROOT / "build"
 STAGE = BUILD / "portable-stage"
 VENV = BUILD / "portable-venv"
 NAME = "LiveSubtitles"
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 SIBLING_MODULES = (
     "__init__", "bilibili", "browser_cookies", "user_login", "youtube_web",
     "missevan", "translate", "config", "emotes", "gifts", "slang",

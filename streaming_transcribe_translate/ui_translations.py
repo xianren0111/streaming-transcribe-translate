@@ -2,6 +2,7 @@
 
 
 _ROWS = """
+忽略拟声词 · 仅跳过整句笑声、叫声或常见拟声词，不翻译或发送|Ignore sound words · Skip sound-only laughter, calls and common onomatopoeia; do not translate or send|擬音語を無視 · 笑い声・鳴き声・既知の擬音語だけの文は翻訳・送信しない|의성어 무시 · 웃음소리, 울음소리, 일반 의성어만 있는 문장은 번역하거나 보내지 않음
 使用当前界面语言的默认模板|Use the default template for this UI language|現在の表示言語の既定テンプレートを使う|현재 UI 언어의 기본 템플릿 사용
 发送模板不能为空。|Chat template cannot be empty.|送信テンプレートは空にできません。|전송 템플릿은 비워 둘 수 없습니다.
 模板格式不正确，仅支持 {translation}、{original}、{language}。|Invalid template. Use only {translation}, {original}, {language}.|テンプレートが無効です。{translation}・{original}・{language}のみ使用できます。|템플릿 형식이 잘못되었습니다. {translation}, {original}, {language}만 사용할 수 있습니다.

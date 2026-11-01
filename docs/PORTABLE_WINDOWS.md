@@ -1,10 +1,10 @@
 # Windows portable edition
 
-Release: `v1.0.0`, Windows x64.
+Release: `v1.0.1`, Windows x64.
 
 ## For users
 
-1. Download `LiveSubtitles-1.0.0-windows-x64.zip` from
+1. Download `LiveSubtitles-1.0.1-windows-x64.zip` from
    [GitHub Releases](https://github.com/xianren0111/streaming-transcribe-translate/releases).
 2. Extract the entire ZIP into a writable folder, for example
    `Documents\LiveSubtitles`. Do not run the EXE from inside the ZIP or move the
@@ -67,8 +67,8 @@ Portable archives include runtime dependencies, bundled platform components,
 FFmpeg and third-party license notices; local user data and downloaded models
 must never be collected.
 
-Publish `LiveSubtitles-1.0.0-corresponding-source.zip` alongside the Windows
-archive and `LiveSubtitles-1.0.0-SHA256SUMS.txt`. The source archive contains the
+Publish `LiveSubtitles-1.0.1-corresponding-source.zip` alongside the Windows
+archive and `LiveSubtitles-1.0.1-SHA256SUMS.txt`. The source archive contains the
 corresponding sources and build configuration for the bundled LGPL-only FFmpeg.
 Third-party notices and the Streaming components' MIT redistribution
 authorization are included with the bundle. The source archive is for license
@@ -83,3 +83,17 @@ configuration, send chat or contact translation APIs.
 Add `--self-test-models` to also load the installed Japanese ReazonSpeech and
 Chinese Whisper models and recognize a short silence sample. This requires
 models in the validation copy; do not include them in release archives.
+
+## Updating from v1.0.0
+
+Quit the old application normally before updating. Extract v1.0.1 into a new
+writable folder. If desired, copy your private `models` folder and saved
+configuration files from the old folder; do not share them. Keys may require
+re-entry on a different Windows account or PC.
+
+v1.0.1 adds a default-enabled **Ignore sound words** checkbox in subtitle
+behavior settings. Whole utterances consisting only of known laughter, calls
+or common onomatopoeia are skipped before translation, display and chat
+delivery. Mixed sentences and ambiguous or unknown words remain unchanged.
+Older settings without this field use the new enabled default. Uncheck it to
+restore translation of these sounds.

@@ -19,7 +19,7 @@ from .paths import RESOURCE_ROOT, ROOT
 from .interface_preferences import system_language
 
 log = logging.getLogger(__name__)
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 TEXT = {
     "zh": (
         "同传字幕 · 首次准备", "首次使用需要下载语音模型（约 230 MB）。\n音频在本机识别，翻译需在设置中填写服务。\n请选择可写文件夹解压，不要从 ZIP 内直接运行。",
@@ -163,6 +163,13 @@ def self_test(*, check_models: bool = False) -> dict[str, object]:
     with tempfile.TemporaryDirectory(dir=ROOT):
         pass
     checks = ["runtime imports", "platform imports", "Tk", "FFmpeg", "PCM audio conversion", "browser HTTP", "writable portable folder"]
+    from .caption_session import is_sound_only
+    from .subtitle_settings import SubtitleSettings
+    if not SubtitleSettings().ignore_onomatopoeia or not is_sound_only("hahaha!"):
+        raise RuntimeError("Bundled sound-only filter failed its default-enabled check.")
+    if is_sound_only("ha ha that's funny"):
+        raise RuntimeError("Bundled sound-only filter removed meaningful speech.")
+    checks.append("default-enabled sound-only filter")
     if check_models:
         from .reazon_asr import create_asr
         for language in ("ja", "zh"):

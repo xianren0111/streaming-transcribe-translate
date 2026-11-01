@@ -2257,6 +2257,7 @@ class TranslationApp:
             values=("边听边出", "说完再出"), state="readonly",
         ).pack(fill="x", pady=5)
         toggle(behavior, "deduplicate", "去掉同一条识别结果内重复的字句（也可能去掉真实重复）")
+        toggle(behavior, "ignore_onomatopoeia", "忽略拟声词 · 仅跳过整句笑声、叫声或常见拟声词，不翻译或发送")
         decisions = section("翻译", "在线 Decisions 模型辅助（可选）")
         self._label(
             decisions, "开启后会把原文/译文发给 OpenCode Zen，不发送音频。网络失败会明确提示并跳过辅助。",

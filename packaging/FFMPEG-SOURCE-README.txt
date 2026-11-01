@@ -1,4 +1,4 @@
-LiveSubtitles 1.0.0 corresponding source materials
+LiveSubtitles 1.0.1 corresponding source materials
 
 The application invokes FFmpeg as a separate executable and PyAV dynamically
 loads the same LGPL FFmpeg build. No original PyAV codec DLLs, x264, x265,
